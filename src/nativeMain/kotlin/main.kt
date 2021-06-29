@@ -1,6 +1,6 @@
 import kotlinx.cinterop.*
 import platform.posix.*
-import com.tetramad.wc.*
+import com.github.tetramad.kwc.*
 
 fun main(/*args: Array<String>*/) {
     val file: CPointer<FILE>? = fopen("input.txt", "r")

@@ -1,4 +1,4 @@
-package com.tetramad.wc
+package com.github.tetramad.kwc
 
 import kotlin.test.*
 
