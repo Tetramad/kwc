@@ -1,14 +1,17 @@
 package com.tetramad.wc
 
+// count every first non-whitespace characters.
+// example
+//content: lorem   ipsum   dolor  sit amet
+//counts :01       2       3      4   5
+//inWords:FT      FT      FT     FT  FT
 fun words(content: String): Int {
-    fun Pair<Int, Boolean>.counts(): Int = this.first
-    fun Pair<Int, Boolean>.isInWords(): Boolean = this.second
+    var isInWord = false
+    var count = 0
 
-    return content.fold(0 to false) { state, c -> when {
-        state.isInWords() && c.isWhitespace() -> state.counts() to false
-        state.isInWords() && !c.isWhitespace() -> state.counts() to true
-        !state.isInWords() && c.isWhitespace() -> state.counts() to false
-        !state.isInWords() && !c.isWhitespace() -> state.counts() + 1 to true
-        else -> state
-    }}.counts()
+    for (c in content) {
+        count += if (!isInWord and !c.isWhitespace()) 1 else 0
+        isInWord = !c.isWhitespace()
+    }
+    return count
 }
