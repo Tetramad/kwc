@@ -6,12 +6,12 @@ package com.github.tetramad.kwc
 //counts :01       2       3      4   5
 //inWords:FT      FT      FT     FT  FT
 fun words(content: String): Int {
-    var isInWord = false
-    var count = 0
+    fun Pair<Boolean, Int>.isInWords(): Boolean = this.first
+    fun Pair<Boolean, Int>.counts(): Int = this.second
 
-    for (c in content) {
-        count += if (!isInWord and !c.isWhitespace()) 1 else 0
-        isInWord = !c.isWhitespace()
-    }
-    return count
+    return content.fold(Pair(false, 0)) { state, c -> when {
+        state.isInWords() and c.isWhitespace() -> Pair(false, state.counts())
+        !state.isInWords() and !c.isWhitespace() -> Pair(true, state.counts() + 1)
+        else -> state
+    }}.counts()
 }
