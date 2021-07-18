@@ -15,7 +15,7 @@ fun main(/*args: Array<String>*/) {
             content = arr.toKString()
         }
         fclose(file)
-        print("${lines(content)} ${words(content)} ${bytes(content)}")
+        print("${lines(content)} ${words(content)} ${characters(content)}")
     } else {
         print("Can't open file")
     }
