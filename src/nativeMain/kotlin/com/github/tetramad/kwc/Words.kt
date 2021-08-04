@@ -1,10 +1,12 @@
 package com.github.tetramad.kwc
 
-// count every first non-whitespace characters.
-// example
-//content: lorem   ipsum   dolor  sit amet
-//counts :01       2       3      4   5
-//inWords:FT      FT      FT     FT  FT
+/**
+ *  last modified at 2021.08.05 by Tetramad
+ */
+@Deprecated(
+    "Use WordCounter() class with consume method and count property.",
+    ReplaceWith("WordCounter().apply { content.forEach { consume(it) } }.count")
+)
 fun words(content: String): Int {
     fun Pair<Boolean, Int>.isInWords(): Boolean = this.first
     fun Pair<Boolean, Int>.counts(): Int = this.second
@@ -17,7 +19,13 @@ fun words(content: String): Int {
 }
 
 /**
- *  last modified at 2021.08.04 by Tetramad
+ *  last modified at 2021.08.05 by Tetramad
+ *
+ * count every first non-whitespace characters.
+ * =Example=
+ * content : lorem   ipsum   dolor  sit amet
+ * count   :01       2       3      4   5
+ * inInWord:FT      FT      FT     FT  FT
  */
 class WordCounter : Counter() {
     var isInWord: Boolean = false

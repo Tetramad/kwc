@@ -1,10 +1,9 @@
 import com.github.tetramad.kotlinnative.*
 import com.github.tetramad.kwc.*
-import kotlin.math.max
 import kotlinx.cli.*
 
 /**
- *  last modified 2021.08.04 by Tetramad
+ *  last modified at 2021.08.05 by Tetramad
  */
 fun main(args: Array<String>) {
     val parser = ArgParser("kwc")
@@ -25,55 +24,49 @@ fun main(args: Array<String>) {
         .vararg()
     parser.parse(args)
 
-    val nullOpt = linesOpts.isEmpty() and wordsOpts.isEmpty() and charsOpts.isEmpty() and bytesOpts.isEmpty()
-    val linesOpt = if (nullOpt) { true } else { linesOpts.isNotEmpty() }
-    val wordsOpt = if (nullOpt) { true } else { wordsOpts.isNotEmpty() }
-    val charsOpt = if (nullOpt) { false } else { charsOpts.isNotEmpty() }
-    val bytesOpt = if (nullOpt) { true } else { bytesOpts.isNotEmpty() }
+    val counters = mutableListOf<Counter>().apply {
+        if (linesOpts.isNotEmpty()) {
+            add(LineCounter())
+        }
+        if (wordsOpts.isNotEmpty()) {
+            add(WordCounter())
+        }
+        if (charsOpts.isNotEmpty()) {
+            add(CharCounter())
+        }
+        if (bytesOpts.isNotEmpty()) {
+            add(ByteCounter())
+        }
+
+        if (isEmpty()) {
+            add(LineCounter())
+            add(WordCounter())
+            add(ByteCounter())
+        }
+    }
 
     val results = inputFiles.map {
         val file = fileOpen(it, modes = "r")
-        val content = file.map(::fileContent)
+        val result = file.map(::fileContent)
         file.onSuccess(::fileClose)
-        content
-    }.map {
-        it.map { content ->
-            val linesString = if (linesOpt) {
-                lines(content).toString().run {
-                    padStart(max(0, 3 - length), ' ')
+        result
+    }.map { result ->
+        result.map { content ->
+            content.forEach {
+                counters.forEach { counter ->
+                    counter.consume(it)
                 }
-            } else {
-                ""
             }
-            val wordsString = if (wordsOpt) {
-                words(content).toString().run {
-                    padStart(max(0, 3 - length), ' ')
-                }
-            } else {
-                ""
+            counters.joinToString(" ") { counter ->
+                counter.count.toString()
             }
-            val charsString = if (charsOpt) {
-                chars(content).toString().run {
-                    padStart(max(0, 3 - length), ' ')
-                }
-            } else {
-                ""
-            }
-            val bytesString = if (bytesOpt) {
-                bytes(content).toString().run {
-                    padStart(max(0, 3 - length), ' ')
-                }
-            } else {
-                ""
-            }
-            "$linesString$wordsString$charsString$bytesString"
         }
     }
 
     inputFiles.zip(results).forEach { (fileName, result) ->
         println(result.fold(
-            { content -> "${content} ${fileName}" },
-            { exception -> "${parser.programName}: ${fileName}: ${exception.message ?: "Unknown Error"}" }
+            { content -> "$content $fileName" },
+            { exception -> "${parser.programName}: $fileName: ${exception.message ?: "Unknown Error"}" }
         ))
     }
 }
