@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
                 ""
             }
             val charsString = if (charsOpt) {
-                characters(content).toString().run {
+                chars(content).toString().run {
                     padStart(max(0, 3 - length), ' ')
                 }
             } else {

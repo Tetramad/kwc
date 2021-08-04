@@ -15,3 +15,22 @@ fun words(content: String): Int {
         else -> state
     }}.counts()
 }
+
+/**
+ *  last modified at 2021.08.04 by Tetramad
+ */
+class WordCounter : Counter() {
+    var isInWord: Boolean = false
+
+    override fun consume(c: Char) {
+        when {
+            isInWord and c.isWhitespace() -> {
+                isInWord = false
+            }
+            !isInWord and !c.isWhitespace() -> {
+                isInWord = true
+                count += 1
+            }
+        }
+    }
+}
