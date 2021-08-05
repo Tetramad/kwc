@@ -53,8 +53,8 @@ fun main(args: Array<String>) {
                         counter.consume(c)
                     }
                 }
-                counters.joinToString(" ") { counter ->
-                    counter.count.toString().also {
+                counters.map { counter ->
+                    counter.count.also {
                         counter.clear()
                     }
                 }
@@ -63,8 +63,19 @@ fun main(args: Array<String>) {
 
     inputFiles.zip(results).forEach { (fileName, result) ->
         println(result.fold(
-            { content -> "$content $fileName" },
+            { content -> "${content.joinToString(" ", transform = Int::toString)} $fileName" },
             { exception -> "${parser.programName}: $fileName: ${exception.message ?: "Unknown Error"}" }
         ))
+    }
+    if (results.size > 1) {
+        val total = MutableList(counters.size) { 0 }
+        results.forEach { result ->
+            result.map {
+                for (i in total.indices) {
+                    total[i] += it[i]
+                }
+            }
+        }
+        println("${total.joinToString(" ", transform = Int::toString)} total")
     }
 }
