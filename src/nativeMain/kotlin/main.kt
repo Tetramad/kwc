@@ -45,23 +45,19 @@ fun main(args: Array<String>) {
         }
     }
 
-    val results = inputFiles.map {
-        val file = fileOpen(it, modes = "r")
-        val result = file.map(::fileContent)
-        file.onSuccess(::fileClose)
-        result
-    }.map { result ->
-        result.map { content ->
-            content.forEach {
-                counters.forEach { counter ->
-                    counter.consume(it)
+    val results = inputFiles.map(::readFile)
+        .map { result ->
+            result.map { content ->
+                content.forEach { c ->
+                    counters.forEach { counter ->
+                        counter.consume(c)
+                    }
+                }
+                counters.joinToString(" ") { counter ->
+                    counter.count.toString()
                 }
             }
-            counters.joinToString(" ") { counter ->
-                counter.count.toString()
-            }
         }
-    }
 
     inputFiles.zip(results).forEach { (fileName, result) ->
         println(result.fold(
