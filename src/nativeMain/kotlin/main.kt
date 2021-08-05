@@ -3,7 +3,7 @@ import com.github.tetramad.kwc.*
 import kotlinx.cli.*
 
 /**
- *  last modified at 2021.08.05 by Tetramad
+ *  last modified at 2021.08.06 by Tetramad
  */
 fun main(args: Array<String>) {
     val parser = ArgParser("kwc")
@@ -54,7 +54,9 @@ fun main(args: Array<String>) {
                     }
                 }
                 counters.joinToString(" ") { counter ->
-                    counter.count.toString()
+                    counter.count.toString().also {
+                        counter.clear()
+                    }
                 }
             }
         }
